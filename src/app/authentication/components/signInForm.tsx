@@ -72,7 +72,7 @@ const SignInForm = () => {
 
   return (
     <>
-      <Card>
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>Sign In</CardTitle>
           <CardDescription>Faça login para continuar</CardDescription>

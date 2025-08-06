@@ -57,24 +57,22 @@ const SignUpForm = () => {
   });
 
   async function onSubmit(values: FormValues) {
-    const { data, error } = await authClient.signUp.email({
+    await authClient.signUp.email({
       name: values.name,
       email: values.email,
       password: values.password,
       fetchOptions: {
         onSuccess: () => {
-          toast.success("Conta criada com sucesso!");
           router.push("/");
         },
         onError: (error) => {
           if (error.error.code === "USER_ALREADY_EXISTS") {
-            toast.error("Usuário já existe.");
-            form.setError("email", {
-              type: "manual",
-              message: error.error.message,
+            toast.error("E-mail já cadastrado.");
+            return form.setError("email", {
+              message: "E-mail já cadastrado.",
             });
           }
-          toast.error("Erro ao criar conta.");
+          toast.error(error.error.message);
         },
       },
     });
@@ -82,7 +80,7 @@ const SignUpForm = () => {
 
   return (
     <>
-      <Card>
+      <Card className="w-full">
         <CardHeader>
           <CardTitle>Cadastro</CardTitle>
           <CardDescription>Faça seu cadastro para continuar</CardDescription>
@@ -90,7 +88,7 @@ const SignUpForm = () => {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <CardContent className="grid gap-6">
+            <CardContent className="grid w-full gap-6">
               <FormField
                 control={form.control}
                 name="name"
