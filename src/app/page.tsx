@@ -4,7 +4,9 @@ import Image from "next/image";
 import CategorySelector from "@/components/common/categorySelector";
 import Footer from "@/components/common/footer";
 import Header from "@/components/common/header";
+import Partners from "@/components/common/Partners";
 import ProductList from "@/components/common/productsList";
+import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { productTable } from "@/db/schema";
 
@@ -14,49 +16,95 @@ const Home = async () => {
       variants: true,
     },
   });
+
   const newlyCreatedProducts = await db.query.productTable.findMany({
     orderBy: [desc(productTable.createdAt)],
+    limit: 8,
     with: {
       variants: true,
     },
   });
+
   const categories = await db.query.categoryTable.findMany({});
 
   return (
     <>
       <Header />
-      <div className="space-y-6">
-        <div className="px-5">
+      <main className="space-y-8 pb-8">
+        {/* Banner Principal */}
+        <section className="px-5">
           <Image
             src="/banner.svg"
             alt="Leve uma vida com estilo"
             height={0}
             width={0}
             sizes="100vw"
-            className="h-auto w-full"
+            className="h-auto w-full rounded-lg"
+            priority
           />
-        </div>
+        </section>
 
-        <ProductList products={products} title="Mais vendidos" />
+        {/* Marcas Parceiras */}
+        <section className="space-y-4">
+          <h2 className="px-5 text-xl font-semibold">Marcas Parceiras</h2>
+          <div className="flex gap-4 overflow-x-auto px-5 pb-2 [&::-webkit-scrollbar]:hidden">
+            {Partners.map((partner) => (
+              <div
+                key={partner.title}
+                className="flex min-w-fit flex-col items-center gap-2"
+              >
+                <Button variant="secondary" size="sm" className="p-3">
+                  <Image
+                    src={partner.imageUrl}
+                    alt={partner.title}
+                    height={54}
+                    width={54}
+                  />
+                </Button>
+                <span className="text-center text-xs whitespace-nowrap">
+                  {partner.title}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
 
-        <div className="px-5">
+        {/* Produtos Mais Vendidos */}
+        <section>
+          <ProductList products={products.slice(0, 8)} title="Mais Vendidos" />
+        </section>
+
+        {/* Seletor de Categorias */}
+        <section className="px-5">
           <CategorySelector categories={categories} />
-        </div>
+        </section>
 
-        <div className="px-5">
+        {/* Banner Secundário */}
+        <section className="px-5">
           <Image
             src="/banner2.svg"
-            alt="Leve uma vida com estilo"
+            alt="Ofertas especiais"
             height={0}
             width={0}
             sizes="100vw"
-            className="h-auto w-full"
+            className="h-auto w-full rounded-lg"
           />
-        </div>
+        </section>
 
-        <ProductList products={newlyCreatedProducts} title="Novos produtos" />
-        <Footer />
-      </div>
+        {/* Produtos Novos */}
+        <section>
+          <ProductList products={newlyCreatedProducts} title="Novos Produtos" />
+        </section>
+
+        {/* Produtos em Destaque */}
+        <section>
+          <ProductList
+            products={products.slice(8, 16)}
+            title="Produtos em Destaque"
+          />
+        </section>
+      </main>
+      <Footer />
     </>
   );
 };
