@@ -46,8 +46,8 @@ const Home = async () => {
 
         {/* Marcas Parceiras */}
         <section className="space-y-4">
-          <h2 className="px-5 text-xl font-semibold">Marcas Parceiras</h2>
-          <div className="flex gap-4 overflow-x-auto px-5 pb-2 [&::-webkit-scrollbar]:hidden">
+          <h2 className="px-5 font-semibold">Marcas Parceiras</h2>
+          <div className="flex justify-between gap-4 overflow-x-auto px-4 pb-2 [&::-webkit-scrollbar]:hidden">
             {Partners.map((partner) => (
               <div
                 key={partner.title}
