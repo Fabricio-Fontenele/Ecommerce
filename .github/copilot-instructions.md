@@ -81,6 +81,7 @@ Este projeto é um **e-commerce Next.js 15 com App Router** usando **PostgreSQL 
 
 - Use React Query para interagir com server actions em client components.
 - Sempre crie hooks customizados para queries e mutations.
+- Sempre crie e exporte uma função que retorne a query key de uma query e mutation key de uma mutation.
 - Exemplos:
   - [useCart.ts](../../src/hooks/queries/useCart.ts)
   - [useIncreaseCartProductQuantity.ts](../../src/hooks/mutations/useIncreaseCartProductQuantity.ts)
