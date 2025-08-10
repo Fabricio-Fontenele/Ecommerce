@@ -1,4 +1,4 @@
-"user server";
+"use server";
 
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
