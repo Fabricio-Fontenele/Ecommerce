@@ -53,7 +53,9 @@ const Addresses = ({ shippingAddresses, initialCart }: AddressesProps = {}) => {
         await updateCartShippingAddressMutation.mutateAsync({
           shippingAddressId: newAddressId,
         });
-        toast.success("Endereço vinculado ao carrinho com sucesso!");
+        toast.success("Endereço selecionado para entrega!", {
+          position: "top-center",
+        });
       } catch (error) {
         toast.error("Erro ao vincular endereço ao carrinho");
         console.error(error);
@@ -72,7 +74,7 @@ const Addresses = ({ shippingAddresses, initialCart }: AddressesProps = {}) => {
       await updateCartShippingAddressMutation.mutateAsync({
         shippingAddressId: selectedAddress,
       });
-      toast.success("Endereço vinculado ao carrinho com sucesso!");
+      toast.success("Endereço selecionado para entrega!");
     } catch (error) {
       toast.error("Erro ao vincular endereço ao carrinho");
       console.error(error);
