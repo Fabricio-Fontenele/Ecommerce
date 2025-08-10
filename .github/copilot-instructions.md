@@ -47,7 +47,7 @@ Este projeto é um **e-commerce Next.js 15 com App Router** usando **PostgreSQL 
 - Use componentes da biblioteca shadcn/ui sempre que possível ([lista de componentes](https://ui.shadcn.com/)).
 - Valide formulários sempre com Zod.
 - Sempre use React Hook Form para criação/validação de formulários.
-- Utilize o componente [form.tsx](mdc: src/components/ui/form.tsx), e veja exemplos em [signInForm.tsx](mdc: src/app/authentication/components/signInForm.tsx) e [signUpForm.tsx](mdc: src/app/authentication/components/signUpForm.tsx).
+- Utilize o componente [form.tsx](../../src/components/ui/form.tsx), e veja exemplos em [signInForm.tsx](../../src/app/authentication/components/signInForm.tsx) e [signUpForm.tsx](../../src/app/authentication/components/signUpForm.tsx).
 - Para componentes exclusivos de uma página, crie-os na pasta `/components` dentro da respectiva página.
 - Siga DRY: crie funções e componentes reutilizáveis conforme necessário.
 
@@ -61,13 +61,13 @@ Este projeto é um **e-commerce Next.js 15 com App Router** usando **PostgreSQL 
 - Sempre valide os dados com o schema Zod antes de verificar autenticação.
 - Verifique autenticação com:  
   `await auth.api.getSession({ headers: await headers() })`
-- Use [addCartProduct](mdc: src/actions/addCartProduct) como referência de padrão.
+- Use [addCartProduct](../src/actions/addCartProduct) como referência de padrão.
 
 ---
 
 ## Banco de Dados
 
-- Use sempre `src/db/index.ts` para interagir com o banco.
+- Use sempre `src/db/index.ts` para interagir com o banco e veja o arquivo [schema.ts](../../src/db/schema.ts).
 - Comandos:
   ```bash
   npx drizzle-kit generate   # Gerar migrações após mudanças no schema
@@ -82,10 +82,10 @@ Este projeto é um **e-commerce Next.js 15 com App Router** usando **PostgreSQL 
 - Use React Query para interagir com server actions em client components.
 - Sempre crie hooks customizados para queries e mutations.
 - Exemplos:
-  - [useCart.ts](mdc: src/hooks/queries/useCart.ts)
-  - [useIncreaseCartProductQuantity.ts](mdc: src/hooks/mutations/useIncreaseCartProductQuantity.ts)
-  - [cartItem.tsx](mdc: src/components/common/cartItem.tsx)
-  - [cart.tsx](mdc: src/components/common/cart.tsx)
+  - [useCart.ts](../../src/hooks/queries/useCart.ts)
+  - [useIncreaseCartProductQuantity.ts](../../src/hooks/mutations/useIncreaseCartProductQuantity.ts)
+  - [cartItem.tsx](../../src/components/common/cartItem.tsx)
+  - [cart.tsx](../../src/components/common/cart.tsx)
 
 ---
 
@@ -119,8 +119,8 @@ Este projeto é um **e-commerce Next.js 15 com App Router** usando **PostgreSQL 
 Sempre consulte e siga os exemplos padrões já existentes no projeto para manter a consistência:
 
 - Formulários: [form.tsx], [signInForm.tsx], [signUpForm.tsx]
-- Server Actions: [addCartProduct]
+- Server Actions: [addCartProduct](../../src/actions/addCartProduct)
 - Hooks e React Query: [useCart.ts], [useIncreaseCartProductQuantity.ts]
-- Componentes de Carrinho: [cartItem.tsx], [cart.tsx]
+- Componentes de Carrinho: [cartItem.tsx](../../src/components/common/cartItem.tsx), [cart.tsx](../../src/components/common/cart.tsx)
 
 ---

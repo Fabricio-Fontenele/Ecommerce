@@ -7,14 +7,13 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 import AddressForm from "./addressForm";
-import { AddressFormData } from "./addressFormSchema";
 
 const Addresses = () => {
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
 
-  const handleAddressSubmit = (data: AddressFormData) => {
-    console.log("Dados do endereço:", data);
-    // Aqui você pode implementar a lógica para salvar o endereço
+  const handleAddressSuccess = () => {
+    // Após salvar com sucesso, você pode implementar lógicas adicionais aqui
+    console.log("Endereço salvo com sucesso!");
   };
 
   return (
@@ -36,7 +35,7 @@ const Addresses = () => {
 
         {selectedAddress === "add_new_address" && (
           <div className="mt-4">
-            <AddressForm onSubmit={handleAddressSubmit} />
+            <AddressForm onSuccess={handleAddressSuccess} />
           </div>
         )}
       </CardContent>

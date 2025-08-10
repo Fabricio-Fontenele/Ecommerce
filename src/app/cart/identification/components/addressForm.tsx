@@ -13,6 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useCreateShippingAddress } from "@/hooks/mutations/useCreateShippingAddress";
 
 import { AddressFormData, addressFormSchema } from "./addressFormSchema";
 import CpfInput from "./cpfInput";
@@ -20,10 +21,12 @@ import PhoneInput from "./phoneInput";
 import ZipCodeInput from "./zipCodeInput";
 
 interface AddressFormProps {
-  onSubmit: (data: AddressFormData) => void;
+  onSuccess?: () => void;
 }
 
-const AddressForm = ({ onSubmit }: AddressFormProps) => {
+const AddressForm = ({ onSuccess }: AddressFormProps) => {
+  const createShippingAddressMutation = useCreateShippingAddress();
+
   const form = useForm<AddressFormData>({
     resolver: zodResolver(addressFormSchema),
     defaultValues: {
@@ -41,9 +44,20 @@ const AddressForm = ({ onSubmit }: AddressFormProps) => {
     },
   });
 
+  const handleSubmit = async (data: AddressFormData) => {
+    try {
+      await createShippingAddressMutation.mutateAsync(data);
+      form.reset(); // Limpar o formulário após sucesso
+      onSuccess?.(); // Callback opcional para o componente pai
+    } catch (error) {
+      // O erro já é tratado no hook useCreateShippingAddress
+      console.error("Erro ao criar endereço:", error);
+    }
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <FormField
             control={form.control}
@@ -212,8 +226,14 @@ const AddressForm = ({ onSubmit }: AddressFormProps) => {
           />
         </div>
 
-        <Button type="submit" className="w-full">
-          Salvar Endereço
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={createShippingAddressMutation.isPending}
+        >
+          {createShippingAddressMutation.isPending
+            ? "Salvando..."
+            : "Salvar Endereço"}
         </Button>
       </form>
     </Form>
