@@ -14,10 +14,11 @@ export const useCreateShippingAddress = () => {
   return useMutation({
     mutationFn: (data: CreateShippingAddressSchema) =>
       createShippingAddress(data),
-    onSuccess: () => {
+    onSuccess: (result) => {
       toast.success("Endereço salvo com sucesso!");
       // Invalidar a query de endereços para recarregar a lista
       queryClient.invalidateQueries({ queryKey: getShippingAddressesKey() });
+      return result; // Retornar o resultado para uso no componente
     },
     onError: (error) => {
       toast.error(

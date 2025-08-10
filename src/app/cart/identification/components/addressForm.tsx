@@ -21,7 +21,7 @@ import PhoneInput from "./phoneInput";
 import ZipCodeInput from "./zipCodeInput";
 
 interface AddressFormProps {
-  onSuccess?: () => void;
+  onSuccess?: (newAddressId?: string) => void;
 }
 
 const AddressForm = ({ onSuccess }: AddressFormProps) => {
@@ -46,11 +46,10 @@ const AddressForm = ({ onSuccess }: AddressFormProps) => {
 
   const handleSubmit = async (data: AddressFormData) => {
     try {
-      await createShippingAddressMutation.mutateAsync(data);
-      form.reset(); // Limpar o formulário após sucesso
-      onSuccess?.(); // Callback opcional para o componente pai
+      const result = await createShippingAddressMutation.mutateAsync(data);
+      form.reset();
+      onSuccess?.(result.data.id);
     } catch (error) {
-      // O erro já é tratado no hook useCreateShippingAddress
       console.error("Erro ao criar endereço:", error);
     }
   };

@@ -1,11 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
+import { getCart } from "@/actions/getCart";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { shippingAddressTable } from "@/db/schema";
+import { useUpdateCartShippingAddress } from "@/hooks/mutations/useUpdateCartShippingAddress";
+import { UseCart } from "@/hooks/queries/useCart";
 import { useShippingAddresses } from "@/hooks/queries/useShippingAddresses";
 
 import AddressForm from "./addressForm";
@@ -23,17 +28,55 @@ interface ShippingAddress {
 
 interface AddressesProps {
   shippingAddresses?: (typeof shippingAddressTable.$inferSelect)[];
+  initialCart?: Awaited<ReturnType<typeof getCart>>; // Optional initial cart data
 }
 
-const Addresses = ({ shippingAddresses }: AddressesProps = {}) => {
-  const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
+const Addresses = ({ shippingAddresses, initialCart }: AddressesProps = {}) => {
+  const [selectedAddress, setSelectedAddress] = useState<string | null>(
+    initialCart?.shippingAddress?.id || null,
+  );
   const { data: addresses = [], isLoading } = useShippingAddresses({
     initialData: shippingAddresses,
   });
+  const updateCartShippingAddressMutation = useUpdateCartShippingAddress();
+  const { data: cart } = UseCart({ initialData: initialCart });
 
-  const handleAddressSuccess = () => {
-    // Após salvar com sucesso, resetar a seleção para que o formulário seja fechado
+  useEffect(() => {
+    if (cart?.shippingAddress?.id) {
+      setSelectedAddress(cart.shippingAddress.id);
+    }
+  }, [cart]);
+
+  const handleAddressSuccess = async (newAddressId?: string) => {
+    if (newAddressId) {
+      try {
+        await updateCartShippingAddressMutation.mutateAsync({
+          shippingAddressId: newAddressId,
+        });
+        toast.success("Endereço vinculado ao carrinho com sucesso!");
+      } catch (error) {
+        toast.error("Erro ao vincular endereço ao carrinho");
+        console.error(error);
+      }
+    }
     setSelectedAddress(null);
+  };
+
+  const handleGoToPayment = async () => {
+    if (!selectedAddress || selectedAddress === "add_new_address") {
+      toast.error("Selecione um endereço primeiro");
+      return;
+    }
+
+    try {
+      await updateCartShippingAddressMutation.mutateAsync({
+        shippingAddressId: selectedAddress,
+      });
+      toast.success("Endereço vinculado ao carrinho com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao vincular endereço ao carrinho");
+      console.error(error);
+    }
   };
 
   const formatAddress = (address: ShippingAddress) => {
@@ -98,6 +141,21 @@ const Addresses = ({ shippingAddresses }: AddressesProps = {}) => {
         {selectedAddress === "add_new_address" && (
           <div className="mt-4">
             <AddressForm onSuccess={handleAddressSuccess} />
+          </div>
+        )}
+
+        {/* Botão para ir ao pagamento quando um endereço existente estiver selecionado */}
+        {selectedAddress && selectedAddress !== "add_new_address" && (
+          <div className="mt-4">
+            <Button
+              onClick={handleGoToPayment}
+              className="w-full"
+              disabled={updateCartShippingAddressMutation.isPending}
+            >
+              {updateCartShippingAddressMutation.isPending
+                ? "Processando..."
+                : "Ir para o Pagamento"}
+            </Button>
           </div>
         )}
       </CardContent>

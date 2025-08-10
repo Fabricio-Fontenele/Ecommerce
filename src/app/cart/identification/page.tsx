@@ -2,9 +2,10 @@ import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { getCart } from "@/actions/getCart";
 import Header from "@/components/common/header";
 import { db } from "@/db";
-import { cartTable, shippingAddressTable } from "@/db/schema";
+import { shippingAddressTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
 import Addresses from "./components/addreses";
@@ -16,12 +17,10 @@ const IdentificationPage = async () => {
   if (!session?.user.id) {
     redirect("/login");
   }
-  const cart = await db.query.cartTable.findFirst({
-    where: eq(cartTable.userId, session.user.id),
-    with: {
-      items: true,
-    },
-  });
+
+  // Usar a server action getCart que já calcula o totalPriceInCents
+  const cart = await getCart();
+
   if (!cart || cart?.items.length === 0) {
     redirect("/");
   }
@@ -34,7 +33,7 @@ const IdentificationPage = async () => {
     <>
       <Header />
       <div className="px-5">
-        <Addresses shippingAddresses={shippingAddresses} />
+        <Addresses shippingAddresses={shippingAddresses} initialCart={cart} />
       </div>
     </>
   );
