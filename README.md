@@ -1,4 +1,4 @@
-# E-commerce Next.js 15
+# E-commerce
 
 Um projeto de **e-commerce completo** desenvolvido com **Next.js 15 (App Router)**, **PostgreSQL**, **Drizzle ORM** e **Better Auth**, seguindo **boas práticas de arquitetura** e **desenvolvimento moderno**.
 
