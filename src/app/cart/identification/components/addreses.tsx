@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -13,18 +14,8 @@ import { useUpdateCartShippingAddress } from "@/hooks/mutations/useUpdateCartShi
 import { UseCart } from "@/hooks/queries/useCart";
 import { useShippingAddresses } from "@/hooks/queries/useShippingAddresses";
 
+import { formatAddress } from "../../helpers/address";
 import AddressForm from "./addressForm";
-
-interface ShippingAddress {
-  id: string;
-  recipientName: string;
-  street: string;
-  number: string;
-  complement: string | null;
-  neighborhood: string;
-  city: string;
-  state: string;
-}
 
 interface AddressesProps {
   shippingAddresses?: (typeof shippingAddressTable.$inferSelect)[];
@@ -32,6 +23,7 @@ interface AddressesProps {
 }
 
 const Addresses = ({ shippingAddresses, initialCart }: AddressesProps = {}) => {
+  const router = useRouter();
   const [selectedAddress, setSelectedAddress] = useState<string | null>(
     initialCart?.shippingAddress?.id || null,
   );
@@ -75,14 +67,11 @@ const Addresses = ({ shippingAddresses, initialCart }: AddressesProps = {}) => {
         shippingAddressId: selectedAddress,
       });
       toast.success("Endereço selecionado para entrega!");
+      router.push("/cart/confirmation");
     } catch (error) {
       toast.error("Erro ao vincular endereço ao carrinho");
       console.error(error);
     }
-  };
-
-  const formatAddress = (address: ShippingAddress) => {
-    return `${address.street}, ${address.number}${address.complement ? `, ${address.complement}` : ""}, ${address.neighborhood}, ${address.city} - ${address.state}`;
   };
 
   if (isLoading) {
