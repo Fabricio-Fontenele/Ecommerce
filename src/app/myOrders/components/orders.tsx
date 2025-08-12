@@ -7,6 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface OrdersProps {
@@ -35,7 +36,14 @@ const Orders = ({ orders }: OrdersProps) => {
             <Accordion type="single" collapsible key={order.id}>
               <AccordionItem value={`item-${order.id}`}>
                 <AccordionTrigger>
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col gap-1">
+                    {order.status === "paid" && <Badge>Pago</Badge>}
+                    {order.status === "pending" && (
+                      <Badge variant="outline">Pagamento Pendente</Badge>
+                    )}
+                    {order.status === "canceled" && (
+                      <Badge variant="destructive">Cancelado</Badge>
+                    )}
                     <p>
                       Pedido feito em{" "}
                       {new Date(order.createdAt).toLocaleDateString("pt-BR")}
