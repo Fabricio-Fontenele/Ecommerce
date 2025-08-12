@@ -8,7 +8,9 @@ export const useFinishOrder = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: getUseFinishOrderMutationKey(),
-    mutationFn: async () => await finishOrder(),
+    mutationFn: async () => {
+      return await finishOrder();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: getUseFinishOrderMutationKey(),
