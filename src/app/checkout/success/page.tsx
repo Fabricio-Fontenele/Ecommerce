@@ -41,8 +41,8 @@ const SuccessPage = () => {
             >
               <Link href="/">Página Inicial</Link>
             </Button>
-            <Button className="rounded-full" size={"lg"}>
-              Ver meus Pedidos
+            <Button className="rounded-full" size={"lg"} asChild>
+              <Link href="/myOrders">Ver meus Pedidos</Link>
             </Button>
           </DialogFooter>
         </DialogContent>
