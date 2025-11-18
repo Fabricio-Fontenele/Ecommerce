@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import { decreaseCartProductQuantity } from "@/actions/decreaseCartProductQuantity";
 
@@ -14,6 +15,12 @@ export const useDecreaseCartProduct = (cartItemId: string) => {
     mutationFn: () => decreaseCartProductQuantity({ cartItemId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: getUseCartQueryKey });
+    },
+    onError: () => {
+      toast.error("Não foi possível atualizar a quantidade 😕", {
+        description: "Tente novamente em alguns instantes",
+        duration: 5000,
+      });
     },
   });
 };
