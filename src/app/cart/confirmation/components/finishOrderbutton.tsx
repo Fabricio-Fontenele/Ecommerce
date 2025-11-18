@@ -10,18 +10,22 @@ const FinishOrderButton = () => {
   const finishOrderMutation = useFinishOrder();
 
   const handleFinishOrder = async () => {
-    if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
-      throw new Error("Stripe publishable key is not defined");
+    try {
+      if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+        throw new Error("Stripe publishable key is not defined");
+      }
+      const { orderId } = await finishOrderMutation.mutateAsync();
+      const checkoutSession = await createCheckoutSession({ orderId });
+      const stripe = await loadStripe(
+        process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
+      );
+      if (!stripe) {
+        throw new Error("Stripe failed to load");
+      }
+      await stripe.redirectToCheckout({ sessionId: checkoutSession.id });
+    } catch (error) {
+      console.error("Erro ao finalizar pedido:", error);
     }
-    const { orderId } = await finishOrderMutation.mutateAsync();
-    const checkoutSession = await createCheckoutSession({ orderId });
-    const stripe = await loadStripe(
-      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
-    );
-    if (!stripe) {
-      throw new Error("Stripe failed to load");
-    }
-    await stripe.redirectToCheckout({ sessionId: checkoutSession.id });
   };
 
   return (
