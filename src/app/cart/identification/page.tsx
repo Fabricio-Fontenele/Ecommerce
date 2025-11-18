@@ -8,6 +8,7 @@ import Header from "@/components/common/header";
 import { db } from "@/db";
 import { shippingAddressTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
+import { spacingResponsive } from "@/lib/responsiveUtils";
 
 import CartSummary from "../components/cartSummary";
 import Addresses from "./components/addreses";
@@ -36,26 +37,35 @@ const IdentificationPage = async () => {
   );
 
   return (
-    <div>
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <div className="space-y-4 px-5">
-        <Addresses shippingAddresses={shippingAddresses} initialCart={cart} />
-        <CartSummary
-          subtotalInCents={cartTotalInCents}
-          totalInCents={cartTotalInCents}
-          products={cart.items.map((item) => ({
-            id: item.id,
-            name: item.productVariant.product.name,
-            variantName: item.productVariant.name,
-            quantity: item.quantity,
-            priceInCents: item.productVariant.priceInCents,
-            imageUrl: item.productVariant.imageUrl,
-          }))}
-        />
-      </div>
-      <div className="mt-12">
-        <Footer />
-      </div>
+      <main className="flex-1">
+        <div className={`mx-auto max-w-7xl ${spacingResponsive.page}`}>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
+            <div className="lg:col-span-2">
+              <Addresses
+                shippingAddresses={shippingAddresses}
+                initialCart={cart}
+              />
+            </div>
+            <div className="lg:col-span-1">
+              <CartSummary
+                subtotalInCents={cartTotalInCents}
+                totalInCents={cartTotalInCents}
+                products={cart.items.map((item) => ({
+                  id: item.id,
+                  name: item.productVariant.product.name,
+                  variantName: item.productVariant.name,
+                  quantity: item.quantity,
+                  priceInCents: item.productVariant.priceInCents,
+                  imageUrl: item.productVariant.imageUrl,
+                }))}
+              />
+            </div>
+          </div>
+        </div>
+      </main>
+      <Footer />
     </div>
   );
 };
