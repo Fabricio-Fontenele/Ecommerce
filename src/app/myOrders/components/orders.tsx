@@ -29,28 +29,40 @@ interface OrdersProps {
 
 const Orders = ({ orders }: OrdersProps) => {
   return (
-    <div className="space-y-5">
+    <div className="space-y-4 sm:space-y-6">
       {orders.map((order) => (
         <Card key={order.id}>
-          <CardContent>
-            <Accordion type="single" collapsible key={order.id}>
-              <AccordionItem value={`item-${order.id}`}>
-                <AccordionTrigger>
-                  <div className="flex flex-col gap-1">
-                    {order.status === "paid" && <Badge>Pago</Badge>}
-                    {order.status === "pending" && (
-                      <Badge variant="outline">Pagamento Pendente</Badge>
-                    )}
-                    {order.status === "canceled" && (
-                      <Badge variant="destructive">Cancelado</Badge>
-                    )}
-                    <p>
-                      Pedido feito em{" "}
-                      {new Date(order.createdAt).toLocaleDateString("pt-BR")}
+          <CardContent className="p-4 sm:p-6">
+            <Accordion type="single" collapsible>
+              <AccordionItem value={`item-${order.id}`} className="border-none">
+                <AccordionTrigger className="hover:no-underline">
+                  <div className="flex w-full flex-col gap-2 pr-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                    <div className="flex flex-col items-start gap-2">
+                      {order.status === "paid" && (
+                        <Badge className="text-xs">Pago</Badge>
+                      )}
+                      {order.status === "pending" && (
+                        <Badge variant="outline" className="text-xs">
+                          Pagamento Pendente
+                        </Badge>
+                      )}
+                      {order.status === "canceled" && (
+                        <Badge variant="destructive" className="text-xs">
+                          Cancelado
+                        </Badge>
+                      )}
+                      <p className="text-muted-foreground text-xs sm:text-sm">
+                        Pedido feito em{" "}
+                        {new Date(order.createdAt).toLocaleDateString("pt-BR")}
+                      </p>
+                    </div>
+                    <p className="text-left text-xs font-semibold sm:text-right sm:text-sm">
+                      {order.items.length}{" "}
+                      {order.items.length === 1 ? "item" : "itens"}
                     </p>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent>
+                <AccordionContent className="pt-4">
                   <CartSummary
                     subtotalInCents={order.totalPriceInCents}
                     totalInCents={order.totalPriceInCents}

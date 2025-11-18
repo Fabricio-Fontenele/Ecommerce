@@ -8,6 +8,7 @@ import ProductList from "@/components/common/productsList";
 import { db } from "@/db";
 import { productTable, productVariantTable } from "@/db/schema";
 import { formatCentsToBRL } from "@/helpers/money";
+import { spacingResponsive, textResponsive } from "@/lib/responsiveUtils";
 
 import ProductActions from "./components/productActions";
 import VariantSelector from "./components/variantSelector";
@@ -43,50 +44,60 @@ const ProductVariantPage = async ({ params }: ProductVariantPageProps) => {
   });
 
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <div className="flex flex-col space-y-6">
-        {/* Imagem do Produto */}
-        <Image
-          src={productVariant.imageUrl}
-          alt={productVariant.name}
-          sizes="100vw"
-          width={0}
-          height={0}
-          className="h-auto w-full rounded-3xl"
-        />
+      <main className="flex-1">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid grid-cols-1 gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:grid-cols-2 lg:gap-12 lg:px-8">
+            <div className="bg-accent relative aspect-square w-full overflow-hidden rounded-2xl sm:rounded-3xl">
+              <Image
+                src={productVariant.imageUrl}
+                alt={productVariant.name}
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+                priority
+              />
+            </div>
 
-        <div className="px-5">
-          <VariantSelector
-            selectedVariant={productVariant.slug}
-            variants={productVariant.product.variants}
-          />
+            <div className="flex flex-col gap-4 sm:gap-6 lg:gap-8">
+              <div>
+                <h1 className={`${textResponsive.h2} mb-2`}>
+                  {productVariant.product.name}
+                </h1>
+                <p className="text-muted-foreground mb-4 text-sm sm:text-base">
+                  {productVariant.color}
+                </p>
+                <p className={`${textResponsive.h2} text-primary`}>
+                  {formatCentsToBRL(productVariant.priceInCents)}
+                </p>
+              </div>
+
+              <VariantSelector
+                selectedVariant={productVariant.slug}
+                variants={productVariant.product.variants}
+              />
+
+              <ProductActions productVariantId={productVariant.id} />
+
+              <div className="border-t pt-4">
+                <h3 className="mb-3 text-base font-semibold sm:text-lg">
+                  Descrição
+                </h3>
+                <p className="text-muted-foreground text-sm leading-relaxed sm:text-base">
+                  {productVariant.product.description}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className={spacingResponsive.section}>
+            <ProductList title="Produtos similares" products={LikelyProducts} />
+          </div>
         </div>
-
-        <div className="px-5">
-          {/* descrição do Produto */}
-          <h2 className="text-lg font-semibold">
-            {productVariant.product.name}
-          </h2>
-          <h3 className="text-muted-foreground text-sm">
-            {productVariant.color}
-          </h3>
-          <h3 className="text-lg font-semibold">
-            {formatCentsToBRL(productVariant.priceInCents)}
-          </h3>
-        </div>
-
-        <ProductActions productVariantId={productVariant.id} />
-
-        <div className="px-5">
-          <p className="text-sm">{productVariant.product.description}</p>
-        </div>
-
-        <ProductList title="Produtos similares" products={LikelyProducts} />
-
-        <Footer />
-      </div>
-    </>
+      </main>
+      <Footer />
+    </div>
   );
 };
 
