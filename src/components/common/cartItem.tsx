@@ -79,49 +79,56 @@ const CartItem = ({
   };
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-4">
-        <Image
-          src={productVariantImageUrl}
-          alt={productVariantName}
-          width={78}
-          height={78}
-          className="rounded-lg object-cover"
-        />
-        <div className="flex flex-col gap-1">
-          <p className="text-xs font-medium">{productName}</p>
-          <p className="text-muted-foreground text-xs">{productVariantName}</p>
-          <div className="flex w-[100px] items-center justify-between rounded-lg border p-1">
+    <div className="flex items-center justify-between gap-3 sm:gap-4">
+      <div className="flex min-w-0 flex-1 items-center gap-3 sm:gap-4">
+        <div className="relative h-16 w-16 flex-shrink-0 sm:h-20 sm:w-20">
+          <Image
+            src={productVariantImageUrl}
+            alt={productVariantName}
+            fill
+            sizes="(max-width: 640px) 64px, 80px"
+            className="rounded-lg object-cover"
+          />
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col gap-1 sm:gap-1.5">
+          <p className="truncate text-xs font-medium sm:text-sm">
+            {productName}
+          </p>
+          <p className="text-muted-foreground truncate text-xs">
+            {productVariantName}
+          </p>
+          <div className="flex w-[90px] items-center justify-between rounded-lg border p-1 sm:w-[100px]">
             <Button
-              className="h-6 w-6"
+              className="h-5 w-5 sm:h-6 sm:w-6"
               variant="ghost"
               size="sm"
               onClick={handleDecreaseQuantityClick}
             >
-              <MinusIcon size={12} />
+              <MinusIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
             </Button>
             <span className="text-xs font-medium">{quantity}</span>
             <Button
-              className="h-6 w-6"
+              className="h-5 w-5 sm:h-6 sm:w-6"
               variant="ghost"
               size="sm"
               onClick={handleIncreaseQuantityClick}
             >
-              <PlusIcon size={12} />
+              <PlusIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
             </Button>
           </div>
         </div>
       </div>
-      <div className="flex flex-col items-end justify-center gap-2">
+      <div className="flex flex-shrink-0 flex-col items-end justify-center gap-2">
         <Button
           variant="outline"
           size="icon"
           onClick={handleDeleteClick}
           disabled={removeProductFromCartMutation.isPending}
+          className="h-8 w-8 sm:h-9 sm:w-9"
         >
-          <TrashIcon className="h-4 w-4" />
+          <TrashIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
         </Button>
-        <p className="text-sm font-bold">
+        <p className="text-xs font-bold whitespace-nowrap sm:text-sm">
           {formatCentsToBRL(ProductVariantPriceInCents)}
         </p>
       </div>

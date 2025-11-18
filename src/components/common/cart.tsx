@@ -24,31 +24,42 @@ export const Cart = () => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant={"outline"} size={"icon"}>
-          <ShoppingBasketIcon />
+        <Button
+          variant={"outline"}
+          size={"icon"}
+          className="relative h-9 w-9 sm:h-10 sm:w-10"
+        >
+          <ShoppingBasketIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+          {!isEmpty && (
+            <span className="bg-primary text-primary-foreground absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-medium sm:h-5 sm:w-5 sm:text-xs">
+              {cart.items.length}
+            </span>
+          )}
         </Button>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent className="flex w-[85vw] flex-col sm:w-[400px]">
         <SheetHeader>
-          <SheetTitle>Carrinho</SheetTitle>
+          <SheetTitle className="text-lg sm:text-xl">Carrinho</SheetTitle>
         </SheetHeader>
-        <div className="flex h-full flex-col px-5 pb-5">
+        <div className="flex h-full flex-col">
           {isEmpty ? (
-            <div className="text-muted-foreground flex flex-1 flex-col items-center justify-center gap-4 py-12">
-              <ShoppingBasketIcon className="h-12 w-12 opacity-40" />
-              <span className="text-lg font-medium">
+            <div className="text-muted-foreground flex flex-1 flex-col items-center justify-center gap-3 px-4 py-8 sm:gap-4 sm:py-12">
+              <ShoppingBasketIcon className="h-10 w-10 opacity-40 sm:h-12 sm:w-12" />
+              <span className="text-center text-base font-medium sm:text-lg">
                 Seu carrinho está vazio
               </span>
-              <span className="text-sm">Que tal explorar nossos produtos?</span>
+              <span className="text-center text-xs sm:text-sm">
+                Que tal explorar nossos produtos?
+              </span>
               <Button asChild variant="outline" className="mt-2">
                 <Link href="/">Ver produtos</Link>
               </Button>
             </div>
           ) : (
             <>
-              <div className="flex h-full max-h-full flex-col overflow-hidden">
+              <div className="flex-1 overflow-hidden py-4">
                 <ScrollArea className="h-full">
-                  <div className="flex h-full flex-col gap-8">
+                  <div className="flex flex-col gap-6 pr-4 sm:gap-8">
                     {cart.items.map((item) => (
                       <CartItem
                         key={item.id}
@@ -66,23 +77,22 @@ export const Cart = () => {
                   </div>
                 </ScrollArea>
               </div>
-              <div className="flex flex-col gap-4">
-                <Separator />
-                <div className="flex items-center justify-between text-xs font-medium">
+              <div className="flex flex-col gap-3 border-t pt-4 sm:gap-4">
+                <div className="flex items-center justify-between text-xs font-medium sm:text-sm">
                   <p>Subtotal</p>
                   <p>{formatCentsToBRL(cart?.totalPriceInCents ?? 0)}</p>
                 </div>
                 <Separator />
-                <div className="flex items-center justify-between text-xs font-medium">
+                <div className="flex items-center justify-between text-xs font-medium sm:text-sm">
                   <p>Entrega</p>
-                  <p>Grátis</p>
+                  <p className="text-green-600">Grátis</p>
                 </div>
                 <Separator />
-                <div className="flex items-center justify-between text-xs font-medium">
+                <div className="flex items-center justify-between text-sm font-bold sm:text-base">
                   <p>Total</p>
                   <p>{formatCentsToBRL(cart?.totalPriceInCents ?? 0)}</p>
                 </div>
-                <Button className="mt-5 rounded-full" size="lg" asChild>
+                <Button className="mt-2 rounded-full sm:mt-3" size="lg" asChild>
                   <Link href="/cart/identification">Finalizar compra</Link>
                 </Button>
               </div>
