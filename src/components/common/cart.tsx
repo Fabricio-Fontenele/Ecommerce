@@ -28,6 +28,7 @@ export const Cart = () => {
           variant={"outline"}
           size={"icon"}
           className="relative h-9 w-9 sm:h-10 sm:w-10"
+          data-cart-trigger
         >
           <ShoppingBasketIcon className="h-4 w-4 sm:h-5 sm:w-5" />
           {!isEmpty && (

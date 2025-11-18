@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import { removeProductFromCart } from "@/actions/removeCartProduct";
 
@@ -14,6 +15,16 @@ export const useRemoveProductFromCart = (cartItemId: string) => {
     mutationFn: () => removeProductFromCart({ cartItemId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: getUseCartQueryKey });
+      toast.success("Produto removido 🗑️", {
+        description: "O item foi removido da sua sacola",
+        duration: 3000,
+      });
+    },
+    onError: () => {
+      toast.error("Não foi possível remover o produto 😕", {
+        description: "Tente novamente em alguns instantes",
+        duration: 5000,
+      });
     },
   });
 };
