@@ -1,38 +1,39 @@
 "use server";
 
 import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
 import Stripe from "stripe";
 
 import { db } from "@/db";
 import { orderItemTable, orderTable } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { ACTION_ERROR_MESSAGES } from "@/lib/actionErrors";
+import { getRequiredSession } from "@/lib/authSession";
+import { env } from "@/lib/env";
 
 import { createCheckoutSessionSchema } from "./schema";
 
 export const createCheckoutSession = async (
   data: createCheckoutSessionSchema,
 ) => {
-  if (!process.env.STRIPE_SECRET_KEY) {
-    throw new Error("Stripe secret key is not defined");
-  }
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  if (!session?.user) {
-    throw new Error("Unauthorized");
-  }
+  const session = await getRequiredSession();
 
   const { orderId } = createCheckoutSessionSchema.parse(data);
+
   const order = await db.query.orderTable.findFirst({
     where: eq(orderTable.id, orderId),
   });
   if (!order) {
-    throw new Error("Order not found");
+    throw new Error(ACTION_ERROR_MESSAGES.orderNotFound);
   }
   if (order.userId !== session.user.id) {
-    throw new Error("Unauthorized");
+    throw new Error(ACTION_ERROR_MESSAGES.unauthorized);
   }
+  if (order.status === "paid") {
+    throw new Error(ACTION_ERROR_MESSAGES.orderAlreadyPaid);
+  }
+  if (order.status === "cancelled") {
+    throw new Error(ACTION_ERROR_MESSAGES.orderCancelled);
+  }
+
   const orderItems = await db.query.orderItemTable.findMany({
     where: eq(orderItemTable.orderId, orderId),
     with: {
@@ -40,12 +41,12 @@ export const createCheckoutSession = async (
     },
   });
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+  const stripe = new Stripe(env.stripeSecretKey());
   const checkoutSession = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     mode: "payment",
-    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/success`,
-    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/cancel`,
+    success_url: `${env.appUrl()}/checkout/success`,
+    cancel_url: `${env.appUrl()}/checkout/cancel`,
     metadata: {
       orderId,
     },
@@ -65,5 +66,8 @@ export const createCheckoutSession = async (
       };
     }),
   });
-  return checkoutSession;
+  return {
+    id: checkoutSession.id,
+    orderId,
+  };
 };

@@ -3,6 +3,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
 import { db } from "@/db";
 import * as schema from "@/db/schema";
+import { env } from "@/lib/env";
 
 export const auth = betterAuth({
   emailAndPassword: {
@@ -11,8 +12,8 @@ export const auth = betterAuth({
   socialProviders: {
     google: {
       enabled: true,
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      clientId: env.googleClientId(),
+      clientSecret: env.googleClientSecret(),
     },
   },
   database: drizzleAdapter(db, {

@@ -1,6 +1,7 @@
 "use client";
 import { loadStripe } from "@stripe/stripe-js";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 import { createCheckoutSession } from "@/actions/createCheckoutSession";
 import { Button } from "@/components/ui/button";
@@ -24,7 +25,12 @@ const FinishOrderButton = () => {
       }
       await stripe.redirectToCheckout({ sessionId: checkoutSession.id });
     } catch (error) {
-      console.error("Erro ao finalizar pedido:", error);
+      toast.error("Não foi possível iniciar o pagamento", {
+        description:
+          error instanceof Error
+            ? error.message
+            : "Tente novamente em alguns instantes",
+      });
     }
   };
 

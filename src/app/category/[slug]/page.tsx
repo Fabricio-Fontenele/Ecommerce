@@ -11,6 +11,8 @@ import {
   textResponsive,
 } from "@/lib/responsiveUtils";
 
+export const revalidate = 300;
+
 interface CategoryPageProps {
   params: Promise<{ slug: string }>;
 }

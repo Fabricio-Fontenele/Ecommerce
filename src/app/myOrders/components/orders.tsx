@@ -46,7 +46,7 @@ const Orders = ({ orders }: OrdersProps) => {
                           Pagamento Pendente
                         </Badge>
                       )}
-                      {order.status === "canceled" && (
+                      {order.status === "cancelled" && (
                         <Badge variant="destructive" className="text-xs">
                           Cancelado
                         </Badge>

@@ -18,8 +18,8 @@ import {
 } from "../ui/sheet";
 import CartItem from "./cartItem";
 
-export const Cart = () => {
-  const { data: cart } = UseCart();
+export const Cart = ({ enabled = true }: { enabled?: boolean }) => {
+  const { data: cart } = UseCart({ enabled });
   const isEmpty = !cart?.items || cart.items.length === 0;
   return (
     <Sheet>
