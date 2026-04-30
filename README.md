@@ -192,6 +192,15 @@ npm run seed
 npm run dev
 ```
 
+**6️⃣ Valide a aplicação**
+
+```bash
+npm run lint
+npm run typecheck
+npm run test
+npm run build
+```
+
 🎉 Acesse http://localhost:3000
 
 ---
@@ -229,6 +238,11 @@ src/
 │   ├── schema.ts           Schema Drizzle (tabelas)
 │   ├── seed.ts             Dados de exemplo
 │   └── index.ts            Conexão do banco
+│
+├── 🧪 tests/               Testes automatizados
+│   ├── unit/               Helpers, componentes e formulários
+│   ├── integration/        Server Actions e webhook do Stripe
+│   └── e2e/                Smoke tests com Playwright
 │
 ├── 🪝 hooks/                Hooks customizados
 │   ├── mutations/          React Query mutations
@@ -356,7 +370,13 @@ npm run dev          # 🚀 Servidor de desenvolvimento (localhost:3000)
 npm run build        # 🏗️  Build otimizado para produção
 npm run start        # ▶️  Servidor de produção
 npm run lint         # 🔍 Verificar código com ESLint
+npm run typecheck    # 🧠 Verificar tipos com TypeScript
 npm run seed         # 🌱 Popular banco com dados de exemplo
+npm run test         # ✅ Executar toda a suíte
+npm run test:unit    # 🧪 Executar testes unitários
+npm run test:integration  # 🔗 Executar testes de integração
+npm run test:e2e     # 🌐 Executar smoke tests E2E
+npm run check        # 🛡️ Rodar lint + typecheck + build
 ```
 
 ---

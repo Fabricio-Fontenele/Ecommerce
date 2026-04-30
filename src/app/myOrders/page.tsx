@@ -1,24 +1,22 @@
-import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
+import { desc, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 
 import Header from "@/components/common/header";
 import { db } from "@/db";
 import { orderTable } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { getRequiredSession } from "@/lib/authSession";
 import { spacingResponsive, textResponsive } from "@/lib/responsiveUtils";
 
 import Orders from "./components/orders";
 
 const MyOrdersPage = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getRequiredSession();
   if (!session?.user) {
-    redirect("/login");
+    redirect("/authentication");
   }
   const orders = await db.query.orderTable.findMany({
     where: eq(orderTable.userId, session?.user.id),
+    orderBy: [desc(orderTable.createdAt)],
     with: {
       items: {
         with: {

@@ -6,12 +6,14 @@ import Footer from "@/components/common/footer";
 import Header from "@/components/common/header";
 import ProductList from "@/components/common/productsList";
 import { db } from "@/db";
-import { productTable, productVariantTable } from "@/db/schema";
+import { productVariantTable } from "@/db/schema";
 import { formatCentsToBRL } from "@/helpers/money";
 import { spacingResponsive, textResponsive } from "@/lib/responsiveUtils";
 
 import ProductActions from "./components/productActions";
 import VariantSelector from "./components/variantSelector";
+
+export const revalidate = 300;
 
 interface ProductVariantPageProps {
   params: Promise<{ slug: string }>;
@@ -33,11 +35,15 @@ const ProductVariantPage = async ({ params }: ProductVariantPageProps) => {
   });
 
   if (!productVariant) {
-    console.log(`Produto não encontrado para slug: ${slug}`);
     return notFound();
   }
-  const LikelyProducts = await db.query.productTable.findMany({
-    where: eq(productTable.categoryId, productVariant.product.categoryId),
+  const likelyProducts = await db.query.productTable.findMany({
+    where: (product, { and, ne }) =>
+      and(
+        eq(product.categoryId, productVariant.product.categoryId),
+        ne(product.id, productVariant.product.id),
+      ),
+    limit: 8,
     with: {
       variants: true,
     },
@@ -92,7 +98,7 @@ const ProductVariantPage = async ({ params }: ProductVariantPageProps) => {
           </div>
 
           <div className={spacingResponsive.section}>
-            <ProductList title="Produtos similares" products={LikelyProducts} />
+            <ProductList title="Produtos similares" products={likelyProducts} />
           </div>
         </div>
       </main>

@@ -1,64 +1,39 @@
 "use server";
 
-import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
+import { sql } from "drizzle-orm";
 
 import { db } from "@/db";
-import { cartItemTable, cartTable } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { cartItemTable } from "@/db/schema";
+import { ACTION_ERROR_MESSAGES } from "@/lib/actionErrors";
+import { getRequiredSession } from "@/lib/authSession";
+import { getOrCreateCart } from "@/lib/cart";
 
 import { AddProductToCartSchema, addProductToCartSchema } from "./schema";
 
 export const addProductToCart = async (data: AddProductToCartSchema) => {
   addProductToCartSchema.parse(data);
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  if (!session?.user) {
-    throw new Error("User not authenticated");
-  }
+  const session = await getRequiredSession();
   const productVariant = await db.query.productVariantTable.findFirst({
     where: (productVariant, { eq }) =>
       eq(productVariant.id, data.productVariantId),
   });
   if (!productVariant) {
-    throw new Error("product variant not found");
+    throw new Error(ACTION_ERROR_MESSAGES.productVariantNotFound);
   }
 
-  const cart = await db.query.cartTable.findFirst({
-    where: (cart, { eq }) => eq(cart.userId, session.user.id),
-  });
-  let cartId = cart?.id;
+  const cart = await getOrCreateCart(session.user.id);
 
-  if (!cartId) {
-    const [newCart] = await db
-      .insert(cartTable)
-      .values({
-        userId: session.user.id,
-      })
-      .returning();
-    cartId = newCart.id;
-  }
-
-  const cartItem = await db.query.cartItemTable.findFirst({
-    where: (cartItem, { eq }) =>
-      eq(cartItem.cartId, cartId) &&
-      eq(cartItem.productVariantId, data.productVariantId),
-  });
-
-  if (cartItem) {
-    await db
-      .update(cartItemTable)
-      .set({
-        quantity: cartItem.quantity + data.quantity,
-      })
-      .where(eq(cartItemTable.id, cartItem.id));
-    return;
-  }
-
-  await db.insert(cartItemTable).values({
-    cartId,
-    productVariantId: data.productVariantId,
-    quantity: data.quantity,
-  });
+  await db
+    .insert(cartItemTable)
+    .values({
+      cartId: cart.id,
+      productVariantId: data.productVariantId,
+      quantity: data.quantity,
+    })
+    .onConflictDoUpdate({
+      target: [cartItemTable.cartId, cartItemTable.productVariantId],
+      set: {
+        quantity: sql`${cartItemTable.quantity} + ${data.quantity}`,
+      },
+    });
 };

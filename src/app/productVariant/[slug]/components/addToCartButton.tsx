@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { addProductToCart } from "@/actions/addCartProduct";
 import { Button } from "@/components/ui/button";
+import { ACTION_ERROR_MESSAGES, isActionErrorMessage } from "@/lib/actionErrors";
 
 interface AddToCartButtonProps {
   productVariantId: string;
@@ -40,10 +41,7 @@ const AddToCartButton = ({
       });
     },
     onError: (error: Error) => {
-      if (
-        error.message.includes("authenticated") ||
-        error.message.includes("autenticado")
-      ) {
+      if (isActionErrorMessage(error, ACTION_ERROR_MESSAGES.unauthorized)) {
         toast.error("Ops! Você precisa estar logado 🔒", {
           description: "Entre na sua conta para adicionar produtos à sacola",
           duration: 5000,

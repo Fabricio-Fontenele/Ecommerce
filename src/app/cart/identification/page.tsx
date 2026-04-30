@@ -1,27 +1,24 @@
 import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { getCart } from "@/actions/getCart";
 import Footer from "@/components/common/footer";
 import Header from "@/components/common/header";
 import { db } from "@/db";
 import { shippingAddressTable } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { getRequiredSession } from "@/lib/authSession";
+import { getCartTotalPriceInCents, getCartWithItems } from "@/lib/cart";
 import { spacingResponsive } from "@/lib/responsiveUtils";
 
 import CartSummary from "../components/cartSummary";
 import Addresses from "./components/addreses";
 const IdentificationPage = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getRequiredSession();
 
   if (!session?.user.id) {
-    redirect("/login");
+    redirect("/authentication");
   }
 
-  const cart = await getCart();
+  const cart = await getCartWithItems(session.user.id);
 
   if (!cart || cart?.items.length === 0) {
     redirect("/");
@@ -31,10 +28,7 @@ const IdentificationPage = async () => {
     where: eq(shippingAddressTable.userId, session.user.id),
   });
 
-  const cartTotalInCents = cart.items.reduce(
-    (acc, item) => acc + item.productVariant.priceInCents * item.quantity,
-    0,
-  );
+  const cartTotalInCents = getCartTotalPriceInCents(cart);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -45,7 +39,10 @@ const IdentificationPage = async () => {
             <div className="lg:col-span-2">
               <Addresses
                 shippingAddresses={shippingAddresses}
-                initialCart={cart}
+                initialCart={{
+                  ...cart,
+                  totalPriceInCents: cartTotalInCents,
+                }}
               />
             </div>
             <div className="lg:col-span-1">

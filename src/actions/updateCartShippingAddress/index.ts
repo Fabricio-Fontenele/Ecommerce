@@ -1,11 +1,12 @@
 "use server";
 
 import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
 
 import { db } from "@/db";
 import { cartTable } from "@/db/schema";
-import { auth } from "@/lib/auth";
+import { ACTION_ERROR_MESSAGES } from "@/lib/actionErrors";
+import { getRequiredSession } from "@/lib/authSession";
+import { getOrCreateCart } from "@/lib/cart";
 
 import {
   UpdateCartShippingAddressSchema,
@@ -17,13 +18,7 @@ export const updateCartShippingAddress = async (
 ) => {
   updateCartShippingAddressSchema.parse(data);
 
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session?.user) {
-    throw new Error("Unauthorized");
-  }
+  const session = await getRequiredSession();
 
   // Verificar se o endereço de entrega existe e pertence ao usuário
   const shippingAddress = await db.query.shippingAddressTable.findFirst({
@@ -35,17 +30,11 @@ export const updateCartShippingAddress = async (
   });
 
   if (!shippingAddress) {
-    throw new Error("Shipping address not found");
+    throw new Error(ACTION_ERROR_MESSAGES.shippingAddressRequired);
   }
 
   // Buscar o carrinho do usuário
-  const cart = await db.query.cartTable.findFirst({
-    where: (cart, { eq }) => eq(cart.userId, session.user.id),
-  });
-
-  if (!cart) {
-    throw new Error("Cart not found");
-  }
+  const cart = await getOrCreateCart(session.user.id);
 
   // Atualizar o carrinho com o endereço de entrega
   await db
