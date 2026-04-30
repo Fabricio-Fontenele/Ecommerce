@@ -1,16 +1,45 @@
 interface Partner {
-  imageUrl: string;
   title: string;
+  origin: string;
+  mark: string;
 }
 
 const Partners: Partner[] = [
-  { imageUrl: "/nike.svg", title: "Nike" },
-  { imageUrl: "/adidas.svg", title: "Adidas" },
-  { imageUrl: "/puma.svg", title: "Puma" },
-  { imageUrl: "/newbalance.svg", title: "New Balance" },
-  { imageUrl: "/converse.svg", title: "Converse" },
-  { imageUrl: "/polo.svg", title: "Polo" },
-  { imageUrl: "/zara.svg", title: "Zara" },
+  {
+    title: "Nike",
+    origin: "Performance",
+    mark: "NK",
+  },
+  {
+    title: "Adidas",
+    origin: "Street Legacy",
+    mark: "AD",
+  },
+  {
+    title: "Puma",
+    origin: "Sport Culture",
+    mark: "PM",
+  },
+  {
+    title: "New Balance",
+    origin: "Modern Run",
+    mark: "NB",
+  },
+  {
+    title: "Converse",
+    origin: "Canvas Classic",
+    mark: "CV",
+  },
+  {
+    title: "Polo",
+    origin: "Refined Casual",
+    mark: "PL",
+  },
+  {
+    title: "Zara",
+    origin: "Editorial Ready",
+    mark: "ZR",
+  },
 ];
 
 export default Partners;
