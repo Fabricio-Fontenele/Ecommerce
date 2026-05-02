@@ -7,37 +7,43 @@ import Header from "@/components/common/header";
 import HeroBanner from "@/components/common/heroBanner";
 import ProductList from "@/components/common/productsList";
 import PromoBanner from "@/components/common/promoBanner";
-import { db } from "@/db";
+import { getDb } from "@/db";
 import { productTable } from "@/db/schema";
 import { spacingResponsive } from "@/lib/responsiveUtils";
 
 export const revalidate = 300;
 
 const loadProducts = (limit: number) =>
-  db.query.productTable.findMany({
+  getDb().query.productTable.findMany({
     limit,
     with: {
       variants: true,
     },
   });
 
+const loadNewlyCreatedProducts = () =>
+  getDb().query.productTable.findMany({
+    orderBy: [desc(productTable.createdAt)],
+    limit: 8,
+    with: {
+      variants: true,
+    },
+  });
+
+const loadCategories = () => getDb().query.categoryTable.findMany({});
+
 const Home = async () => {
   let products: Awaited<ReturnType<typeof loadProducts>> = [];
-  let newlyCreatedProducts: Awaited<ReturnType<typeof loadProducts>> = [];
-  let categories: Awaited<ReturnType<typeof db.query.categoryTable.findMany>> =
-    [];
+  let newlyCreatedProducts: Awaited<
+    ReturnType<typeof loadNewlyCreatedProducts>
+  > = [];
+  let categories: Awaited<ReturnType<typeof loadCategories>> = [];
 
   try {
     [products, newlyCreatedProducts, categories] = await Promise.all([
       loadProducts(16),
-      db.query.productTable.findMany({
-        orderBy: [desc(productTable.createdAt)],
-        limit: 8,
-        with: {
-          variants: true,
-        },
-      }),
-      db.query.categoryTable.findMany({}),
+      loadNewlyCreatedProducts(),
+      loadCategories(),
     ]);
   } catch (error) {
     console.error("Failed to load home page data", error);

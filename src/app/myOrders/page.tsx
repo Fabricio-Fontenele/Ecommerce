@@ -2,14 +2,17 @@ import { desc, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 
 import Header from "@/components/common/header";
-import { db } from "@/db";
+import { getDb } from "@/db";
 import { orderTable } from "@/db/schema";
 import { getRequiredSession } from "@/lib/authSession";
 import { spacingResponsive, textResponsive } from "@/lib/responsiveUtils";
 
 import Orders from "./components/orders";
 
+export const dynamic = "force-dynamic";
+
 const MyOrdersPage = async () => {
+  const db = getDb();
   const session = await getRequiredSession();
   if (!session?.user) {
     redirect("/authentication");

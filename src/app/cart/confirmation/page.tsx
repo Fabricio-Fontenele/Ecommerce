@@ -11,6 +11,8 @@ import CartSummary from "../components/cartSummary";
 import { formatAddress } from "../helpers/address";
 import FinishOrderButton from "./components/finishOrderbutton";
 
+export const dynamic = "force-dynamic";
+
 const ConfirmationPage = async () => {
   const session = await getRequiredSession();
 

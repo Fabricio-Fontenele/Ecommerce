@@ -2,11 +2,12 @@
 
 import { eq } from "drizzle-orm";
 
-import { db } from "@/db";
+import { getDb } from "@/db";
 import { shippingAddressTable } from "@/db/schema";
 import { getRequiredSession } from "@/lib/authSession";
 
 export const getShippingAddresses = async () => {
+  const db = getDb();
   const session = await getRequiredSession();
 
   const addresses = await db

@@ -2,13 +2,14 @@
 
 import { eq } from "drizzle-orm";
 
-import { db } from "@/db";
+import { getDb } from "@/db";
 import { orderItemTable, orderTable } from "@/db/schema";
 import { ACTION_ERROR_MESSAGES } from "@/lib/actionErrors";
 import { getRequiredSession } from "@/lib/authSession";
 import { getCartTotalPriceInCents, getCartWithItems } from "@/lib/cart";
 
 export const finishOrder = async () => {
+  const db = getDb();
   const session = await getRequiredSession();
 
   const cart = await getCartWithItems(session.user.id);
