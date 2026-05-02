@@ -3,7 +3,7 @@
 import { eq } from "drizzle-orm";
 import Stripe from "stripe";
 
-import { db } from "@/db";
+import { getDb } from "@/db";
 import { orderItemTable, orderTable } from "@/db/schema";
 import { ACTION_ERROR_MESSAGES } from "@/lib/actionErrors";
 import { getRequiredSession } from "@/lib/authSession";
@@ -14,6 +14,7 @@ import { createCheckoutSessionSchema } from "./schema";
 export const createCheckoutSession = async (
   data: createCheckoutSessionSchema,
 ) => {
+  const db = getDb();
   const session = await getRequiredSession();
 
   const { orderId } = createCheckoutSessionSchema.parse(data);

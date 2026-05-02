@@ -1,10 +1,10 @@
 import { headers } from "next/headers";
 
 import { ACTION_ERROR_MESSAGES } from "@/lib/actionErrors";
-import { auth } from "@/lib/auth";
+import { getAuth } from "@/lib/auth";
 
 export const getSession = async () => {
-  return auth.api.getSession({
+  return getAuth().api.getSession({
     headers: await headers(),
   });
 };

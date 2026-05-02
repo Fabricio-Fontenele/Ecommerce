@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { db } from "@/db";
+import { getDb } from "@/db";
 import { shippingAddressTable } from "@/db/schema";
 import { getRequiredSession } from "@/lib/authSession";
 
@@ -14,6 +14,7 @@ import {
 export const createShippingAddress = async (
   data: CreateShippingAddressSchema,
 ) => {
+  const db = getDb();
   const validatedData = createShippingAddressSchema.parse(data);
 
   const session = await getRequiredSession();

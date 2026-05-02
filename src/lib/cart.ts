@@ -1,9 +1,10 @@
 import { eq } from "drizzle-orm";
 
-import { db } from "@/db";
+import { getDb } from "@/db";
 import { cartTable } from "@/db/schema";
 
 export const getOrCreateCart = async (userId: string) => {
+  const db = getDb();
   const existingCart = await db.query.cartTable.findFirst({
     where: eq(cartTable.userId, userId),
   });
@@ -38,6 +39,7 @@ export const getOrCreateCart = async (userId: string) => {
 };
 
 export const getCartWithItems = async (userId: string) => {
+  const db = getDb();
   const cart = await db.query.cartTable.findFirst({
     where: eq(cartTable.userId, userId),
     with: {

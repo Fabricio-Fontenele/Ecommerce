@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import Footer from "@/components/common/footer";
 import Header from "@/components/common/header";
-import { db } from "@/db";
+import { getDb } from "@/db";
 import { shippingAddressTable } from "@/db/schema";
 import { getRequiredSession } from "@/lib/authSession";
 import { getCartTotalPriceInCents, getCartWithItems } from "@/lib/cart";
@@ -11,7 +11,11 @@ import { spacingResponsive } from "@/lib/responsiveUtils";
 
 import CartSummary from "../components/cartSummary";
 import Addresses from "./components/addreses";
+
+export const dynamic = "force-dynamic";
+
 const IdentificationPage = async () => {
+  const db = getDb();
   const session = await getRequiredSession();
 
   if (!session?.user.id) {

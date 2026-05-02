@@ -1,35 +1,44 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
-import { db } from "@/db";
+import { getDb } from "@/db";
 import * as schema from "@/db/schema";
 import { env } from "@/lib/env";
 
-export const auth = betterAuth({
-  emailAndPassword: {
-    enabled: true,
-  },
-  socialProviders: {
-    google: {
+const createAuth = () =>
+  betterAuth({
+    emailAndPassword: {
       enabled: true,
-      clientId: env.googleClientId(),
-      clientSecret: env.googleClientSecret(),
     },
-  },
-  database: drizzleAdapter(db, {
-    provider: "pg",
-    schema,
-  }),
-  user: {
-    modelName: "userTable",
-  },
-  session: {
-    modelName: "sessionTable",
-  },
-  account: {
-    modelName: "accountTable",
-  },
-  verification: {
-    modelName: "verificationTable",
-  },
-});
+    socialProviders: {
+      google: {
+        enabled: true,
+        clientId: env.googleClientId(),
+        clientSecret: env.googleClientSecret(),
+      },
+    },
+    database: drizzleAdapter(getDb(), {
+      provider: "pg",
+      schema,
+    }),
+    user: {
+      modelName: "userTable",
+    },
+    session: {
+      modelName: "sessionTable",
+    },
+    account: {
+      modelName: "accountTable",
+    },
+    verification: {
+      modelName: "verificationTable",
+    },
+  });
+
+let authInstance: ReturnType<typeof createAuth> | undefined;
+
+export const getAuth = () => {
+  authInstance ??= createAuth();
+
+  return authInstance;
+};

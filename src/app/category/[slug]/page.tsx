@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import Header from "@/components/common/header";
 import ProductItem from "@/components/common/productItem";
-import { db } from "@/db";
+import { getDb } from "@/db";
 import { categoryTable, productTable } from "@/db/schema";
 import {
   gridResponsive,
@@ -18,6 +18,7 @@ interface CategoryPageProps {
 }
 
 const CategoryPage = async ({ params }: CategoryPageProps) => {
+  const db = getDb();
   const { slug } = await params;
   const category = await db.query.categoryTable.findFirst({
     where: eq(categoryTable.slug, slug),

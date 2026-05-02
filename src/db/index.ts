@@ -6,4 +6,12 @@ import { env } from "@/lib/env";
 
 import * as schema from "./schema";
 
-export const db = drizzle(env.databaseUrl(), { schema });
+const createDb = () => drizzle(env.databaseUrl(), { schema });
+
+let dbInstance: ReturnType<typeof createDb> | undefined;
+
+export const getDb = () => {
+  dbInstance ??= createDb();
+
+  return dbInstance;
+};

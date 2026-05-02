@@ -1,7 +1,9 @@
 import crypto from "crypto";
 
-import { db } from ".";
+import { getDb } from ".";
 import { categoryTable, productTable, productVariantTable } from "./schema";
+
+const db = getDb();
 
 const productImages = {
   Mochila: {

@@ -175,6 +175,12 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_sua_stripe_public_key"
 STRIPE_WEBHOOK_SECRET="whsec_seu_webhook_secret"
 ```
 
+Para desenvolvimento local, defina também:
+
+```env
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+```
+
 **4️⃣ Configure o banco de dados**
 
 ```bash
@@ -387,7 +393,7 @@ npm run check        # 🛡️ Rodar lint + typecheck + build
 
 1. Faça push do código para o GitHub
 2. Importe o projeto no Vercel
-3. Configure as variáveis de ambiente
+3. Configure as variáveis de ambiente em `Project Settings > Environment Variables`
 4. Deploy automático! ✨
 
 ### Variáveis de Ambiente de Produção
@@ -401,7 +407,14 @@ GOOGLE_CLIENT_SECRET=seu-google-client-secret
 STRIPE_SECRET_KEY=sk_live_sua_key_producao
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_sua_key_producao
 STRIPE_WEBHOOK_SECRET=whsec_seu_webhook_producao
+NEXT_PUBLIC_APP_URL=https://seu-dominio.vercel.app
 ```
+
+### Observações de Deploy
+
+- O projeto depende dessas variáveis em runtime. Se alguma estiver ausente na Vercel, autenticação, checkout, webhook do Stripe ou acesso ao banco vão falhar.
+- A build não deve mais quebrar só por falta dessas variáveis, mas a aplicação continuará precisando delas em produção.
+- O projeto agora fixa `Node 22.x` via `package.json` para manter o ambiente da Vercel alinhado com o desenvolvimento local.
 
 ---
 

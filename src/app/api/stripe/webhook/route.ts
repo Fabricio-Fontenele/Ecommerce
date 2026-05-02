@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import z from "zod";
 
-import { db } from "@/db";
+import { getDb } from "@/db";
 import { orderTable } from "@/db/schema";
 import { ACTION_ERROR_MESSAGES } from "@/lib/actionErrors";
 import { env } from "@/lib/env";
@@ -14,6 +14,7 @@ const checkoutMetadataSchema = z.object({
 
 export const POST = async (request: Request) => {
   try {
+    const db = getDb();
     const signature = request.headers.get("stripe-signature");
 
     if (!signature) {

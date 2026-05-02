@@ -2,7 +2,7 @@
 
 import { sql } from "drizzle-orm";
 
-import { db } from "@/db";
+import { getDb } from "@/db";
 import { cartItemTable } from "@/db/schema";
 import { ACTION_ERROR_MESSAGES } from "@/lib/actionErrors";
 import { getRequiredSession } from "@/lib/authSession";
@@ -12,6 +12,7 @@ import { AddProductToCartSchema, addProductToCartSchema } from "./schema";
 
 export const addProductToCart = async (data: AddProductToCartSchema) => {
   addProductToCartSchema.parse(data);
+  const db = getDb();
   const session = await getRequiredSession();
   const productVariant = await db.query.productVariantTable.findFirst({
     where: (productVariant, { eq }) =>

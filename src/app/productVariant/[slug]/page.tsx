@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import Footer from "@/components/common/footer";
 import Header from "@/components/common/header";
 import ProductList from "@/components/common/productsList";
-import { db } from "@/db";
+import { getDb } from "@/db";
 import { productVariantTable } from "@/db/schema";
 import { formatCentsToBRL } from "@/helpers/money";
 import { spacingResponsive, textResponsive } from "@/lib/responsiveUtils";
@@ -20,6 +20,7 @@ interface ProductVariantPageProps {
 }
 
 const ProductVariantPage = async ({ params }: ProductVariantPageProps) => {
+  const db = getDb();
   const { slug } = await params;
 
   const productVariant = await db.query.productVariantTable.findFirst({
